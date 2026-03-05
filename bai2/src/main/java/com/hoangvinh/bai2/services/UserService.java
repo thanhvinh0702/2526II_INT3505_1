@@ -2,6 +2,7 @@ package com.hoangvinh.bai2.services;
 
 import com.hoangvinh.bai2.dto.UserCreateRequest;
 import com.hoangvinh.bai2.dto.UserResponse;
+import com.hoangvinh.bai2.dto.UserUpdateRequest;
 import com.hoangvinh.bai2.mappers.UserMapper;
 import com.hoangvinh.bai2.model.User;
 import com.hoangvinh.bai2.repositories.UserRepository;
@@ -22,6 +23,13 @@ public class UserService {
         return userRepository.findAll().stream()
                 .map(userMapper::toResponse)
                 .toList();
+    }
+
+    public UserResponse updateUser(Long id, UserUpdateRequest userUpdateRequest) {
+        User user = userRepository.findById(id).orElseThrow(NoSuchElementException::new);
+        user.setEmail(userUpdateRequest.getEmail());
+        user.setUsername(userUpdateRequest.getUsername());
+        return userMapper.toResponse(userRepository.save(user));
     }
 
     public UserResponse findUserById(Long id) {

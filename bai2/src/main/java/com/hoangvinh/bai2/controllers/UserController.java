@@ -2,6 +2,7 @@ package com.hoangvinh.bai2.controllers;
 
 import com.hoangvinh.bai2.dto.UserCreateRequest;
 import com.hoangvinh.bai2.dto.UserResponse;
+import com.hoangvinh.bai2.dto.UserUpdateRequest;
 import com.hoangvinh.bai2.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,5 +32,11 @@ public class UserController {
     @PostMapping("/users")
     public ResponseEntity<UserResponse> createUser(@RequestBody UserCreateRequest userCreateRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userCreateRequest));
+    }
+
+    @PatchMapping("/users/{id}")
+    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id,
+                                                   @RequestBody UserUpdateRequest userUpdateRequest) {
+        return ResponseEntity.ok(userService.updateUser(id, userUpdateRequest));
     }
 }
