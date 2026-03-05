@@ -44,4 +44,10 @@ public class UserService {
                 .build();
         return userMapper.toResponse(userRepository.save(user));
     }
+
+    public UserResponse deleteUser(Long id) {
+        User user = userRepository.findById(id).orElseThrow(NoSuchElementException::new);
+        userRepository.delete(user);
+        return userMapper.toResponse(user);
+    }
 }
