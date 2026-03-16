@@ -1,0 +1,53 @@
+openapi: 3.0.0
+info:
+  title: Book Management
+  description: The Book Management REST-based API supports book management of an online library. The API includes the following capabilities and operations...
+  contact: {}
+  version: '1,0'
+paths:
+  /books:
+    get:
+      tags: 
+      - Books
+      summary: Return a list of books
+      description: Provides a list of books based on the search criteria provided...
+      operationId: ListBooks
+      parameters:
+      - name: title
+        in: query
+        description: A query string use for filtering books by title. If not provided, all book will be listed.
+        schema: 
+          type: string
+      responses:
+        200:
+          description: Success
+          content: 
+            application/json:
+              schema: 
+                  $ref: '#/components/schemas/ListBookResponse'
+        401: 
+          description: Request failed. Invalid credentials.
+        403:
+          description: Request failed. Unauthorized access.
+
+components:
+  schemas:
+    ListBookResponse: 
+      title: ListBookResponse
+      type: object
+      properties:
+        books:
+          type: array
+          items: 
+            $ref: '#/components/schemas/BookDetails'
+            description: "A list of book details"
+    BookDetails:
+      title: BookDetails
+      type: object
+      properties:
+        bookId:
+          type: string
+          description: "An identifier of book"
+        title:
+          type: string
+          description: "The title of book"
