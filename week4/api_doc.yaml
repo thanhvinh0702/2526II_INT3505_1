@@ -15,19 +15,20 @@ paths:
       parameters:
        - name: title
          in: query
+         required: false
          description: A query string use for filtering books by title. If not provided, all book will be listed.
          schema: 
           type: string
       responses:
-        200:
+        '200':
           description: Success
           content: 
             application/json:
               schema: 
                   $ref: '#/components/schemas/ListBookResponse'
-        401: 
+        '401': 
           description: Request failed. Invalid credentials.
-        403:
+        '403':
           description: Request failed. Unauthorized access.
     post:
       tags:
@@ -42,17 +43,17 @@ paths:
             schema:
               $ref: '#/components/schemas/CreateBookRequest'
       responses:
-        201:
+        '201':
           description: Book created successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/BookDetails'
-        400:
+        '400':
           description: Invalid request data
-        401:
+        '401':
           description: Request failed. Invalid credentials.
-        403:
+        '403':
           description: Request failed. Unauthorized access.
   
   /books/{bookId}:
@@ -65,22 +66,120 @@ paths:
       parameters:
         - name: bookId
           in: path
+          required: true
           description: The unique identifier of a book
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: Book Found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/BookDetails'
-        401:
+        '401':
           description: Request failed. Invalid credentials.
-        403:
+        '403':
           description: Request failed. Unauthorized access.
-        404:
+        '404':
           description: Request failed. Book not found.
+    
+    put:
+      tags:
+        - Books
+      summary: Update book by ID
+      description: Update the details of an existing book using its ID.
+      operationId: UpdateBook
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          description: The unique identifier of the book
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBookRequest'
+      responses:
+        '200':
+          description: Book updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookDetails'
+        '400':
+          description: Invalid request data
+        '404':
+          description: Book not found
+        '401':
+          description: Request failed. Invalid credentials.
+        '403':
+          description: Request failed. Unauthorized access.
+      
+    patch:
+      tags:
+        - Books
+      summary: Partially update book by ID
+      description: Partially update the details of an existing book using its ID.
+      operationId: PatchBook
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          description: The unique identifier of the book
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBookRequest'
+      responses:
+        '200':
+          description: Book updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookDetails'
+        '400':
+          description: Invalid request data
+        '404':
+          description: Book not found
+        '401':
+          description: Request failed. Invalid credentials.
+        '403':
+          description: Request failed. Unauthorized access.
+
+    delete:
+      tags:
+        - Books
+      summary: Delete book by ID
+      description: Delete existing book using its identifier.
+      operationId: DeleteBook
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          description: The unique identifier of the book
+          schema: 
+            type: string
+      responses:
+        '200':
+          description: Book deleted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookDetails'
+        '404':
+          description: Book not found
+        '401':
+          description: Request failed. Invalid credentials.
+        '403':
+          description: Request failed. Unauthorized access.
 
 components:
   schemas:
@@ -90,9 +189,9 @@ components:
       properties:
         books:
           type: array
+          description: A list of book details
           items: 
             $ref: '#/components/schemas/BookDetails'
-            description: A list of book details
     BookDetails:
       title: BookDetails
       type: object
