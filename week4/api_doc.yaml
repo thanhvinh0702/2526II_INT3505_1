@@ -8,15 +8,15 @@ paths:
   /books:
     get:
       tags: 
-      - Books
+       - Books
       summary: Return a list of books
       description: Provides a list of books based on the search criteria provided...
       operationId: ListBooks
       parameters:
-      - name: title
-        in: query
-        description: A query string use for filtering books by title. If not provided, all book will be listed.
-        schema: 
+       - name: title
+         in: query
+         description: A query string use for filtering books by title. If not provided, all book will be listed.
+         schema: 
           type: string
       responses:
         200:
@@ -29,6 +29,58 @@ paths:
           description: Request failed. Invalid credentials.
         403:
           description: Request failed. Unauthorized access.
+    post:
+      tags:
+        - Books
+      summary: Create a new book
+      description: Create a new book in the library system.
+      operationId: CreateBook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBookRequest'
+      responses:
+        201:
+          description: Book created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookDetails'
+        400:
+          description: Invalid request data
+        401:
+          description: Request failed. Invalid credentials.
+        403:
+          description: Request failed. Unauthorized access.
+  
+  /books/{bookId}:
+    get:
+      tags:
+        - Books
+      summary: Get Book by ID
+      description: Retrieve a specific book using its identifier
+      operationId: GetBookById
+      parameters:
+        - name: bookId
+          in: path
+          description: The unique identifier of a book
+          schema:
+            type: string
+      responses:
+        200:
+          description: Book Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookDetails'
+        401:
+          description: Request failed. Invalid credentials.
+        403:
+          description: Request failed. Unauthorized access.
+        404:
+          description: Request failed. Book not found.
 
 components:
   schemas:
@@ -40,14 +92,50 @@ components:
           type: array
           items: 
             $ref: '#/components/schemas/BookDetails'
-            description: "A list of book details"
+            description: A list of book details
     BookDetails:
       title: BookDetails
       type: object
       properties:
         bookId:
           type: string
-          description: "An identifier of book"
+          description: An identifier of book
         title:
           type: string
-          description: "The title of book"
+          description: The title of book
+        author:
+          type: string
+          description: The author of the book
+        publishYear:
+          type: integer
+          description: The year the book was published
+    CreateBookRequest:
+      title: CreateBookRequest
+      type: object
+      required:
+        - title
+        - author
+        - publishYear
+      properties:
+        title:
+          type: string
+          description: The title of the book
+        author:
+          type: string
+          description: The author of the book
+        publishYear:
+          type: integer
+          description: The year the book was published
+    UpdateBookRequest:
+      title: UpdateBookRequest
+      type: object
+      properties:
+        title:
+          type: string
+          description: The title of the book
+        author:
+          type: string
+          description: The author of the book
+        publishYear:
+          type: integer
+          description: The year the book was published
