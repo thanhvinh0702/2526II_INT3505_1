@@ -1,0 +1,254 @@
+openapi: 3.0.0
+info:
+  title: Library Management
+  description: The Library Management REST-based API supports book management
+  contact: {}
+  version: 1.0.0
+servers:
+- url: http://localhost:8080
+  description: Local development server
+paths:
+  /books:
+    get:
+      tags:
+      - Books
+      summary: Get list of books
+      operationId: list_books
+      parameters:
+      - name: title
+        in: query
+        description: A query string use for filtering book by title
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: author
+        in: query
+        description: A query string use for filtering book by author
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookListResponse"
+        "500":
+          description: Server not response
+      x-openapi-router-controller: swagger_server.controllers.books_controller
+    post:
+      tags:
+      - Books
+      summary: Create a book resource
+      operationId: create_book
+      requestBody:
+        $ref: "#/components/requestBodies/BookRequest"
+      responses:
+        "201":
+          description: Create resource successfully
+        "400":
+          description: Bad request
+        "500":
+          description: Server not response
+      x-openapi-router-controller: swagger_server.controllers.books_controller
+  /books/{bookId}:
+    get:
+      tags:
+      - Books
+      summary: Get Book by Id
+      operationId: get_book_by_id
+      parameters:
+      - name: bookId
+        in: path
+        description: The unique identifier of a book
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookDetails"
+        "400":
+          description: Bad request
+        "500":
+          description: Server not response
+      x-openapi-router-controller: swagger_server.controllers.books_controller
+    put:
+      tags:
+      - Books
+      summary: Update Book by Id
+      operationId: update_book_by_id
+      parameters:
+      - name: bookId
+        in: path
+        description: The unique identifier of a book
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        $ref: "#/components/requestBodies/BookRequest"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookDetails"
+        "400":
+          description: Bad request
+        "500":
+          description: Server not response
+      x-openapi-router-controller: swagger_server.controllers.books_controller
+    delete:
+      tags:
+      - Books
+      summary: Delete Book by Id
+      operationId: delete_book_by_id
+      parameters:
+      - name: bookId
+        in: path
+        description: The unique identifier of a book
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookDetails"
+        "400":
+          description: Bad request
+        "500":
+          description: Server not response
+      x-openapi-router-controller: swagger_server.controllers.books_controller
+components:
+  schemas:
+    BookListResponse:
+      title: BookListResponse
+      type: object
+      properties:
+        books:
+          type: array
+          description: A list of book details
+          items:
+            $ref: "#/components/schemas/BookDetails"
+      example:
+        books:
+        - publishYear: 0
+          author: author
+          title: title
+          bookId: bookId
+        - publishYear: 0
+          author: author
+          title: title
+          bookId: bookId
+    BookDetails:
+      title: BookDetails
+      type: object
+      properties:
+        bookId:
+          type: string
+          description: An identifier of book
+        title:
+          type: string
+          description: The title of a book
+        author:
+          type: string
+          description: The author name
+        publishYear:
+          type: integer
+          description: The year the book was published
+      example:
+        publishYear: 0
+        author: author
+        title: title
+        bookId: bookId
+  responses:
+    "200BookListResponse":
+      description: Success
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/BookListResponse"
+    "200BookResponse":
+      description: Success
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/BookDetails"
+    "201Created":
+      description: Create resource successfully
+    "400BadRequest":
+      description: Bad request
+    "500ServerError":
+      description: Server not response
+  parameters:
+    BookId:
+      name: bookId
+      in: path
+      description: The unique identifier of a book
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    BookTitle:
+      name: title
+      in: query
+      description: A query string use for filtering book by title
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    BookAuthor:
+      name: author
+      in: query
+      description: A query string use for filtering book by author
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+  requestBodies:
+    BookRequest:
+      description: Body to create/put book resource
+      content:
+        application/json:
+          schema:
+            required:
+            - author
+            - publishYear
+            - title
+            type: object
+            properties:
+              bookId:
+                type: string
+                description: An identifier of book
+              title:
+                type: string
+                description: The title of a book
+              author:
+                type: string
+                description: The author name
+              publishYear:
+                type: integer
+                description: The year the book was published
+      required: true
+

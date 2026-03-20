@@ -1,0 +1,204 @@
+openapi: 3.0.0
+
+info:
+  title: Library Management
+  description: The Library Management REST-based API supports book management
+  contact: {}
+  version: '1.0.0'
+
+servers:
+  - url: 'http://localhost:8080'
+    description: 'Local development server'
+
+paths:
+  /books:
+    get:
+      tags:
+        - Books
+      summary: Get list of books
+      operationId: ListBooks
+      parameters:
+        - $ref: '#/components/parameters/BookTitle'
+        - $ref: '#/components/parameters/BookAuthor'
+      responses:
+        '200':
+          $ref: '#/components/responses/200BookListResponse'
+        '500':
+          $ref: '#/components/responses/500ServerError'
+
+    post:
+      tags:
+        - Books
+      summary: Create a book resource
+      operationId: CreateBook
+      requestBody: 
+        $ref: '#/components/requestBodies/BookRequest'
+      responses:
+        '201': 
+          $ref: '#/components/responses/201Created'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '500':
+          $ref: '#/components/responses/500ServerError'
+
+  /books/{bookId}:
+    get:
+      tags:
+        - Books
+      summary: Get Book by Id
+      operationId: GetBookById
+      parameters:
+        - $ref: '#/components/parameters/BookId'
+      responses:
+        '200':
+          $ref: '#/components/responses/200BookResponse'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+        '500':
+          $ref: '#/components/responses/500ServerError'
+
+    put:
+      tags:
+        - Books
+      summary: Update Book by Id
+      operationId: UpdateBookById
+      parameters:
+        - $ref: '#/components/parameters/BookId'
+      requestBody:
+        $ref: '#/components/requestBodies/BookRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/200BookResponse'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+        '500':
+          $ref: '#/components/responses/500ServerError'
+      
+    delete:
+      tags:
+        - Books
+      summary: Delete Book by Id
+      operationId: DeleteBookById
+      parameters:
+        - $ref: '#/components/parameters/BookId'
+      responses:
+        '200':
+          $ref: '#/components/responses/200BookResponse'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+        '500':
+          $ref: '#/components/responses/500ServerError'
+
+components:
+  schemas:
+    BookListResponse:
+      title: BookListResponse
+      type: object
+      properties:
+        books:
+          type: array
+          description: A list of book details
+          items:
+            $ref: '#/components/schemas/BookDetails'
+    
+    BookDetails:
+      title: BookDetails
+      type: object
+      properties:
+        bookId:
+          type: string
+          description: An identifier of book
+        title:
+          type: string
+          description: The title of a book
+        author:
+          type: string
+          description: The author name
+        publishYear:
+          type: integer
+          description: The year the book was published
+ 
+  parameters:
+    BookId:
+      name: bookId
+      in: path
+      required: true
+      description: The unique identifier of a book
+      schema:
+        type: string
+
+    BookTitle:
+      name: title
+      in: query
+      required: false
+      description: A query string use for filtering book by title
+      schema:
+        type: string
+    
+    BookAuthor:
+      name: author
+      in: query
+      required: false
+      description: A query string use for filtering book by author
+      schema:
+        type: string
+
+  requestBodies:
+    BookRequest:
+      description: Body to create/put book resource
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - title
+              - author
+              - publishYear
+            properties:
+              bookId:
+                type: string
+                description: An identifier of book
+              title:
+                type: string
+                description: The title of a book
+              author:
+                type: string
+                description: The author name
+              publishYear:
+                type: integer
+                description: The year the book was published
+      
+  responses:
+    200BookListResponse:
+      description: Success
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BookListResponse'
+
+    200BookResponse:
+      description: Success
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BookDetails'
+
+    201Created:
+      description: Create resource successfully
+
+    400BadRequest:
+      description: Bad request
+
+    404NotFound:
+      description: Resource does not exist
+
+    500ServerError:
+      description: Server not response
+  
