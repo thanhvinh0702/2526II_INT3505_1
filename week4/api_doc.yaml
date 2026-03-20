@@ -1,9 +1,16 @@
 openapi: 3.0.0
+
 info:
   title: Book Management
   description: The Book Management REST-based API supports book management of an online library. The API includes the following capabilities and operations...
   contact: {}
-  version: '1,0'
+  version: '1.0.0'
+servers:
+  - url: 'http://localhost:5000'
+    description: 'Local development server'
+  - url: 'http://38.29.145.35:40944'
+    description: 'Cloud deployment server'
+
 paths:
   /books:
     get:
