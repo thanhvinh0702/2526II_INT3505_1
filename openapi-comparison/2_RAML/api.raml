@@ -1,0 +1,134 @@
+#%RAML 1.0
+title: Library Management
+version: 1.0.0
+baseUri: http://localhost:8080/api/v1
+description: The Library Management REST-based API supports book management
+
+types:
+  BookDetails:
+    type: object
+    properties:
+      bookId:
+        type: string
+        description: An identifier of book
+      title:
+        type: string
+        description: The title of a book
+      author:
+        type: string
+        description: The author name
+      publishYear:
+        type: integer
+        description: The year the book was published
+
+  BookListResponse:
+    type: object
+    properties:
+      books:
+        type: BookDetails[]
+        description: A list of book details
+
+  BookRequest:
+    type: object
+    required:
+      - title
+      - author
+      - publishYear
+    properties:
+      bookId:
+        type: string
+        description: An identifier of book
+      title:
+        type: string
+        description: The title of a book
+      author:
+        type: string
+        description: The author name
+      publishYear:
+        type: integer
+        description: The year the book was published
+
+/books:
+  get:
+    description: Get list of books
+    queryParameters:
+      title:
+        type: string
+        required: false
+        description: A query string use for filtering book by title
+      author:
+        type: string
+        required: false
+        description: A query string use for filtering book by author
+    responses:
+      200:
+        body:
+          application/json:
+            type: BookListResponse
+      500:
+        description: Server not response
+
+  post:
+    description: Create a book resource
+    body:
+      application/json:
+        type: BookRequest
+    responses:
+      201:
+        description: Create resource successfully
+      400:
+        description: Bad request
+      500:
+        description: Server not response
+
+/books/{bookId}:
+  uriParameters:
+    bookId:
+      type: string
+      required: true
+      description: The unique identifier of a book
+
+  get:
+    description: Get Book by Id
+    responses:
+      200:
+        body:
+          application/json:
+            type: BookDetails
+      400:
+        description: Bad request
+      404:
+        description: Resource does not exist
+      500:
+        description: Server not response
+
+  put:
+    description: Update Book by Id
+    body:
+      application/json:
+        type: BookRequest
+    responses:
+      200:
+        body:
+          application/json:
+            type: BookDetails
+      400:
+        description: Bad request
+      404:
+        description: Resource does not exist
+      500:
+        description: Server not response
+
+  delete:
+    description: Delete Book by Id
+    responses:
+      200:
+        body:
+          application/json:
+            type: BookDetails
+      400:
+        description: Bad request
+      404:
+        description: Resource does not exist
+      500:
+        description: Server not response
