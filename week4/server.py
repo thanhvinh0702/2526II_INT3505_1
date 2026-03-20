@@ -6,8 +6,8 @@ from flask_swagger_ui import get_swaggerui_blueprint
 app = Flask(__name__)
 CORS(app)
 
-SWAGGER_URL = "/docs"  # URL for exposing Swagger UI
-API_URL = "/api_doc.yaml"  # Path to your YAML file
+SWAGGER_URL = "/docs"
+API_URL = "/api_doc.yaml"
 
 swaggerui_blueprint = get_swaggerui_blueprint(
     SWAGGER_URL,
