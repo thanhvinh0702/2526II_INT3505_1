@@ -1,10 +1,34 @@
 from flask import Flask, request, jsonify, abort
 import uuid
 from flask_cors import CORS
+from flask_swagger_ui import get_swaggerui_blueprint
 
 app = Flask(__name__)
 CORS(app)
+
+SWAGGER_URL = "/docs"  # URL for exposing Swagger UI
+API_URL = "/api_doc.yaml"  # Path to your YAML file
+
+swaggerui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={"app_name": "Book Management API"}
+)
+
+app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
+
+# Serve your YAML file
+from flask import send_from_directory
+@app.route("/api_doc.yaml")
+def swagger_yaml():
+    return send_from_directory(".", "api_doc.yaml")
+
 books_db = {}
+
+
+@app.route("/", methods=['GET'])
+def hello():
+    return jsonify({"hello": "world"}), 200
 
 @app.route("/books", methods=["GET"])
 def list_books():
