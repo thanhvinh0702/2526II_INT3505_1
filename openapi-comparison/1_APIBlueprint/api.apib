@@ -1,0 +1,118 @@
+FORMAT: 1A
+HOST: http://localhost:8080/api/v1
+
+# Library Management API
+
+The Library Management REST-based API supports book management.
+
+# Group Books
+
+## Books Collection [/books]
+
+### List Books [GET /books{?title,author}]
+
++ Response 200 (application/json)
+    + Attributes (BookListResponse)
+
++ Response 500 (text/plain)
+
+        Server not response
+
+
+### Create Book [POST]
+
++ Request (application/json)
+    + Attributes (BookRequest)
+
++ Response 201 (text/plain)
+
+        Create resource successfully
+
++ Response 400 (text/plain)
+
+        Bad request
+
++ Response 500 (text/plain)
+
+        Server not response
+
+
+## Book Resource [/books/{bookId}]
+
++ Parameters
+    + bookId: `string` (required) - The unique identifier of a book
+
+
+### Get Book by Id [GET]
+
++ Response 200 (application/json)
+    + Attributes (BookDetails)
+
++ Response 400 (text/plain)
+
+        Bad request
+
++ Response 404 (text/plain)
+
+        Resource does not exist
+
++ Response 500 (text/plain)
+
+        Server not response
+
+
+### Update Book by Id [PUT]
+
++ Request (application/json)
+    + Attributes (BookRequest)
+
++ Response 200 (application/json)
+    + Attributes (BookDetails)
+
++ Response 400 (text/plain)
+
+        Bad request
+
++ Response 404 (text/plain)
+
+        Resource does not exist
+
++ Response 500 (text/plain)
+
+        Server not response
+
+
+### Delete Book by Id [DELETE]
+
++ Response 200 (application/json)
+    + Attributes (BookDetails)
+
++ Response 400 (text/plain)
+
+        Bad request
+
++ Response 404 (text/plain)
+
+        Resource does not exist
+
++ Response 500 (text/plain)
+
+        Server not response
+
+
+# Data Structures
+
+## BookDetails (object)
++ bookId: `string` - An identifier of book
++ title: `string` - The title of a book
++ author: `string` - The author name
++ publishYear: `number` - The year the book was published
+
+## BookListResponse (object)
++ books (array[BookDetails]) - A list of book details
+
+## BookRequest (object)
++ bookId: `string` (optional) - An identifier of book
++ title: `string` (required) - The title of a book
++ author: `string` (required) - The author name
++ publishYear: `number` (required) - The year the book was published
