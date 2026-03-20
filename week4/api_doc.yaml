@@ -10,6 +10,8 @@ servers:
     description: 'Local development server'
   - url: 'http://38.29.145.35:40944'
     description: 'Cloud deployment server'
+  - url: 'https://2526-ii-int-3505-1-neon.vercel.app/'
+    description: 'Vercel deployment server'
 
 paths:
   /books:
