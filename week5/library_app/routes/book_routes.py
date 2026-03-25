@@ -5,7 +5,24 @@ book_bp = Blueprint("books", __name__, url_prefix="/api/v1/books")
 
 @book_bp.route("", methods=["GET"])
 def get_books():
-    books = Book.query.all()
+    search = request.args.get("search")
+    author_id = request.args.get("author_id")
+    category_id = request.args.get("category_id")
+    limit = int(request.args.get("limit", 10))
+    offset = int(request.args.get("offset", 0))
+    query = Book.query
+
+    if search:
+        query = query.filter(Book.title.ilike(f"%{search}%"))
+
+    if author_id:
+        query = query.filter(Book.author_id == author_id)
+
+    if category_id:
+        query = query.filter(Book.category_id == category_id)
+
+    total = query.count()
+    books = query.offset(offset).limit(limit).all()
 
     result = []
     for b in books:
@@ -17,7 +34,12 @@ def get_books():
         })
 
     return jsonify({
-        "data": result
+        "data": result,
+        "pagination": {
+            "total": total,
+            "limit": limit,
+            "offset": offset
+        }
     })
 
 @book_bp.route("", methods=["POST"])
