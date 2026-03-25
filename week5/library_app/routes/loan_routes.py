@@ -5,7 +5,14 @@ loan_bp = Blueprint("loans", __name__, url_prefix="/api/v1/loans")
 
 @loan_bp.route("", methods=["GET"])
 def get_loans():
-    query = Loan.query.all()
+    query = Loan.query
+    user_id = request.args.get("user_id")
+    limit = request.args.get("limit", 10)
+    offset = request.args.get("offset", 0)
+    if user_id:
+        query = query.filter(Loan.user_id == user_id)
+    total = query.count()
+    query = query.limit(limit).offset(offset)
 
     results = []
     for l in query:
@@ -16,7 +23,13 @@ def get_loans():
             "borrow_date": l.borrow_date,
             "return_date": l.return_date
         })
-    return jsonify({"date": results})
+    return jsonify({
+        "date": results,
+        "pagination": {
+            "total": total,
+            "limit": limit,
+            "offset": offset
+        }})
 
 @loan_bp.route("", methods=["POST"])
 def borrow_book():

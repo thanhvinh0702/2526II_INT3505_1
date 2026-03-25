@@ -24,13 +24,25 @@ def create_author():
 # GET /api/v1/authors
 @author_bp.route("", methods=["GET"])
 def get_authors():
-    authors = Author.query.all()
+    query = Author.query
+    search = request.args.get("search")
+    limit = request.args.get("limit", 10)
+    offset = request.args.get("offset", 0)
 
+    if search:
+        query = query.filter(Author.name.ilike(f"%{search}%"))
+    total = query.count()
+    authors = query.limit(limit).offset(offset).all()
     return jsonify({
         "data": [
             {
                 "id": a.id,
                 "name": a.name
             } for a in authors
-        ]
+        ],
+        "pagination": {
+            "total": total,
+            "limit": limit,
+            "offset": offset
+        }
     })
