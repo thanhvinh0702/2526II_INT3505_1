@@ -1,16 +1,17 @@
 from flask import Blueprint, request, jsonify
 from models import db, Loan, Book
+from utils.jwt import require_jwt
 
 loan_bp = Blueprint("loans", __name__, url_prefix="/api/v1/loans")
 
 @loan_bp.route("", methods=["GET"])
-def get_loans():
-    query = Loan.query
-    user_id = request.args.get("user_id")
+@require_jwt()
+def get_loans(claims):
+    query = Loan.query.filter(Loan.user_id == claims['sub'])
+
     limit = request.args.get("limit", 10)
     offset = request.args.get("offset", 0)
-    if user_id:
-        query = query.filter(Loan.user_id == user_id)
+
     total = query.count()
     query = query.limit(limit).offset(offset)
 
@@ -32,7 +33,8 @@ def get_loans():
         }})
 
 @loan_bp.route("", methods=["POST"])
-def borrow_book():
+@require_jwt()
+def borrow_book(claims):
     data = request.json
 
     book = Book.query.get(data["book_id"])
@@ -41,7 +43,7 @@ def borrow_book():
         return jsonify({"error": "Book not available"}), 400
 
     loan = Loan(
-        user_id=data["user_id"],
+        user_id=claims["sub"],
         book_id=data["book_id"]
     )
 
@@ -54,7 +56,8 @@ def borrow_book():
 
 
 @loan_bp.route("/<int:id>/return", methods=["PATCH"])
-def return_book(id):
+@require_jwt()
+def return_book(claims, id):
     loan = Loan.query.get(id)
 
     if not loan:

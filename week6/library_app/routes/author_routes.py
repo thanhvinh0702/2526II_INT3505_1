@@ -1,11 +1,13 @@
 from flask import Blueprint, request, jsonify
 from models import db, User
+from utils.jwt import require_jwt
 
 author_bp = Blueprint("authors", __name__, url_prefix="/api/v1/authors")
 
 # GET /api/v1/authors
 @author_bp.route("", methods=["GET"])
-def get_authors():
+@require_jwt()
+def get_authors(claims):
     query = User.query.filter(User.role == "AUTHOR")
     search = request.args.get("search")
     limit = request.args.get("limit", 10)
