@@ -7,3 +7,5 @@
 `npx aglio -i api.apib -s`
 ## Access api doc at
 `localhost:3000`
+## Convert to openapi
+`npx apib2swagger -i api.apib --yaml -o api.yaml`
