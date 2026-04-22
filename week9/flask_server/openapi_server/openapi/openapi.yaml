@@ -1,0 +1,140 @@
+openapi: 3.0.0
+info:
+  title: Product API
+  version: 1.0.0
+
+servers:
+  - url: /api/v1
+
+paths:
+  /products:
+    get:
+      summary: Get all products
+      operationId: get_products
+      x-openapi-router-controller: openapi_server.controllers.products_controller
+      responses:
+        "200":
+          description: List of products
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductList"
+
+    post:
+      summary: Create product
+      operationId: create_product
+      x-openapi-router-controller: openapi_server.controllers.products_controller
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductInput"
+      responses:
+        "201":
+          description: Product created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+
+  /products/{id}:
+    get:
+      summary: Get product by id
+      operationId: get_product_by_id
+      x-openapi-router-controller: openapi_server.controllers.products_controller
+      parameters:
+        - $ref: "#/components/parameters/ProductId"
+      responses:
+        "200":
+          description: Product detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+
+    put:
+      summary: Update product
+      operationId: update_product
+      x-openapi-router-controller: openapi_server.controllers.products_controller
+      parameters:
+        - $ref: "#/components/parameters/ProductId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductInput"
+      responses:
+        "200":
+          description: Updated product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+
+    delete:
+      summary: Delete product
+      operationId: delete_product
+      x-openapi-router-controller: openapi_server.controllers.products_controller
+      parameters:
+        - $ref: "#/components/parameters/ProductId"
+      responses:
+        "200":
+          description: Delete success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteResponse"
+
+components:
+  parameters:
+    ProductId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ProductInput:
+      type: object
+      required:
+        - name
+        - price
+      properties:
+        name:
+          type: string
+        price:
+          type: number
+        description:
+          type: string
+
+    ProductList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Product"
+
+    DeleteResponse:
+      type: object
+      properties:
+        message:
+          type: string
