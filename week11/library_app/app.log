@@ -1,0 +1,10 @@
+2026-05-07 11:39:45,903 INFO Starting Product Service...
+2026-05-07 11:39:45,944 INFO [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+2026-05-07 11:39:45,944 INFO [33mPress CTRL+C to quit[0m
+2026-05-07 11:39:45,944 INFO  * Restarting with stat
+2026-05-07 11:39:46,255 INFO Starting Product Service...
+2026-05-07 11:39:46,272 WARNING  * Debugger is active!
+2026-05-07 11:39:46,295 INFO  * Debugger PIN: 412-198-092
+2026-05-07 11:39:55,546 INFO 127.0.0.1 - - [07/May/2026 11:39:55] "[33mGET / HTTP/1.1[0m" 404 -
+2026-05-07 11:39:55,575 INFO 127.0.0.1 - - [07/May/2026 11:39:55] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
