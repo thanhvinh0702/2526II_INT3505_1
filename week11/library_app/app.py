@@ -3,9 +3,12 @@ from config import Config
 from models import db
 from routes import register_routes
 import logging
+from monitoring import setup_metrics
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+setup_metrics(app)
 
 logging.basicConfig(
     level=logging.INFO,
