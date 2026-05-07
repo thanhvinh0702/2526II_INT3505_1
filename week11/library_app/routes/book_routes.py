@@ -1,12 +1,29 @@
 from flask import Blueprint, request, jsonify
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from models import db, Book, User
 from utils.jwt import require_jwt
+import logging
 
 book_bp = Blueprint("books", __name__, url_prefix="/api/v1/books")
 
+logger = logging.getLogger(__name__)
+
+# Rate Limitter
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=["100 per hour"]
+)
+
+@book_bp.record_once
+def on_load(state):
+    limiter.init_app(state.app)
+
 @book_bp.route("", methods=["GET"])
+@limiter.limit("5 per minute")
 @require_jwt()
 def get_books(claims):
+    logger.info("Fetching all books")
     search = request.args.get("search")
     author_id = request.args.get("author_id")
     category = request.args.get("category")
@@ -48,6 +65,8 @@ def get_books(claims):
 @require_jwt("AUTHOR")
 def create_book(claims):
     data = request.json
+
+    logger.info(f"Creating books: {data}")
 
     author = User.query.filter(
         User.id == claims["sub"],
