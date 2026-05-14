@@ -6,6 +6,7 @@ app = Flask(__name__)
 V1_DEPRECATION_DATE = "2026-08-01"
 V1_SUNSET_DATE = "2026-12-01"
 
+# Common Deprecation Header
 def add_deprecation_headers(response):
     response.headers["Deprecation"] = "true"
 
@@ -24,11 +25,8 @@ def add_deprecation_headers(response):
 
     return response
 
-@app.route("/api/v1/payment", methods=["POST"])
-def payment_v1():
-
-    data = request.json
-
+# Response Helpers
+def payment_response_v1():
     response = make_response(jsonify({
         "version": "v1",
         "status": "success",
@@ -43,15 +41,10 @@ def payment_v1():
         }
     }))
 
-    response = add_deprecation_headers(response)
+    return add_deprecation_headers(response)
 
-    return response
 
-@app.route("/api/v2/payment", methods=["POST"])
-def payment_v2():
-
-    data = request.json
-
+def payment_response_v2():
     return jsonify({
         "version": "v2",
         "status": "success",
@@ -60,6 +53,49 @@ def payment_v2():
         "message": "Payment processed successfully"
     })
 
+# URL versioning
+@app.route("/api/v1/payment", methods=["POST"])
+def payment_v1():
+    return payment_response_v1()
+
+
+@app.route("/api/v2/payment", methods=["POST"])
+def payment_v2():
+    return payment_response_v2()
+
+# Header Versioning
+@app.route("/api/header/payment", methods=["POST"])
+def payment_header_versioning():
+
+    version = request.headers.get("X-API-Version", "v1")
+
+    if version == "v1":
+        return payment_response_v1()
+
+    elif version == "v2":
+        return payment_response_v2()
+
+    return jsonify({
+        "error": "Unsupported API version"
+    }), 400
+
+# Query param versioning
+@app.route("/api/query/payment", methods=["POST"])
+def payment_query_versioning():
+
+    version = request.args.get("version", "v1")
+
+    if version == "v1":
+        return payment_response_v1()
+
+    elif version == "v2":
+        return payment_response_v2()
+
+    return jsonify({
+        "error": "Unsupported API version"
+    }), 400
+
+# Migration Guide
 @app.route("/api/docs/v2-migration")
 def migration_guide():
 
