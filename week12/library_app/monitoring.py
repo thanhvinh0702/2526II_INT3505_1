@@ -1,5 +1,6 @@
 from prometheus_client import Counter, Histogram, generate_latest
 from flask import request, Response
+import logging
 import time
 
 REQUEST_COUNT = Counter(
@@ -13,15 +14,17 @@ REQUEST_LATENCY = Histogram(
     'HTTP Request latency'
 )
 
+logger = logging.getLogger(__name__)
+
 def setup_metrics(app):
 
     @app.before_request
     def before_request():
-        request.start_time = time.time()
+        request.start_time = time.perf_counter()
 
     @app.after_request
     def after_request(response):
-        latency = time.time() - request.start_time
+        latency = time.perf_counter() - request.start_time
 
         REQUEST_LATENCY.observe(latency)
 
@@ -30,6 +33,14 @@ def setup_metrics(app):
             endpoint=request.path,
             status=response.status_code
         ).inc()
+
+        logger.info(
+            "HTTP %s %s -> %s in %.4fs",
+            request.method,
+            request.path,
+            response.status_code,
+            latency
+        )
 
         return response
 
